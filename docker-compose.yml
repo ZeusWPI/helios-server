@@ -1,0 +1,70 @@
+version: '3.1'
+services:
+  db:
+    image: postgres:9.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: helios
+      POSTGRES_USER: helios
+      POSTGRES_PASSWORD: example
+#    volumes:
+#      - /var/run/postgresql/.s.PGSQL.5432:/var/run/postgresql/.s.PGSQL.5432
+    networks:
+      - base
+#    ports:
+#      - 5432:5432
+    container_name: db
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    networks:
+      - base
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    container_name: adminer
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    environment:
+      CELERY_BROKER_URL: 'amqp://rabbitmq'
+      DATABASE_URL: 'postgresql://helios:example@db:5432/helios'
+      ALLOWED_HOSTS: '0.0.0.0'
+      URL_HOST: 'http://0.0.0.0:8000'
+#      SECURE_URL_HOST: https://localhost:8443
+    networks:
+      - base
+    depends_on:
+      - db
+#      - rabbitmq
+    ports:
+      - 8000:8000
+    container_name: web
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      CELERY_BROKER_URL: 'amqp://rabbitmq'
+    networks:
+      - base
+    depends_on:
+      - db
+      - rabbitmq
+    container_name: worker
+
+  rabbitmq:
+    image: rabbitmq:3.8.3-alpine
+    networks:
+      - base
+    ports: # not needed but more clear
+        - 5672:5672
+    container_name: rabbitmq
+
+networks:
+  base:

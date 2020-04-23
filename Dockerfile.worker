@@ -1,0 +1,19 @@
+FROM python:2.7-alpine
+
+RUN \
+ apk add --no-cache postgresql-libs && \
+ apk add --no-cache --virtual .build-deps gcc python-dev musl-dev postgresql-dev
+
+RUN mkdir app
+WORKDIR app
+
+COPY requirements.txt .
+RUN \
+ python -m pip install -r requirements.txt --no-cache-dir && \
+ apk --purge del .build-deps
+
+COPY . .
+
+EXPOSE 8000
+
+ENTRYPOINT celery worker --app helios --events --beat --concurrency 1 --logfile celeryw.log --pidfile celeryw.pid

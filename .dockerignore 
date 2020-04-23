@@ -1,0 +1,4 @@
+venv/
+Dockerfile.web
+Dockerfile.worker
+docker-compose.yml
