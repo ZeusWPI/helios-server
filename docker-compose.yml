@@ -7,21 +7,17 @@ services:
       POSTGRES_DB: helios
       POSTGRES_USER: helios
       POSTGRES_PASSWORD: example
-#    volumes:
-#      - /var/run/postgresql/.s.PGSQL.5432:/var/run/postgresql/.s.PGSQL.5432
-    networks:
-      - base
-#    ports:
-#      - 5432:5432
+    volumes:
+      - /docker/helios-postgres:/var/run/postgresql
+    expose:
+      - "5432"
     container_name: db
 
   adminer:
     image: adminer
     restart: unless-stopped
-    networks:
-      - base
     ports:
-      - 8080:8080
+      - "127.0.0.1:9090:8080"
     depends_on:
       - db
     container_name: adminer
@@ -36,13 +32,11 @@ services:
       ALLOWED_HOSTS: '0.0.0.0'
       URL_HOST: 'http://0.0.0.0:8000'
 #      SECURE_URL_HOST: https://localhost:8443
-    networks:
-      - base
     depends_on:
       - db
-#      - rabbitmq
+      - rabbitmq
     ports:
-      - 8000:8000
+      - "127.0.0.1:8001:8000"
     container_name: web
 
   worker:
@@ -51,8 +45,6 @@ services:
       dockerfile: Dockerfile.worker
     environment:
       CELERY_BROKER_URL: 'amqp://rabbitmq'
-    networks:
-      - base
     depends_on:
       - db
       - rabbitmq
@@ -60,11 +52,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.8.3-alpine
-    networks:
-      - base
-    ports: # not needed but more clear
-        - 5672:5672
+    expose: # not needed but more clear
+        - "5672"
     container_name: rabbitmq
-
-networks:
-  base:
