@@ -29,9 +29,9 @@ services:
     environment:
       CELERY_BROKER_URL: 'amqp://rabbitmq'
       DATABASE_URL: 'postgresql://helios:example@db:5432/helios'
-      ALLOWED_HOSTS: '0.0.0.0'
-      URL_HOST: 'http://0.0.0.0:8000'
-#      SECURE_URL_HOST: https://localhost:8443
+      ALLOWED_HOSTS: '*'
+      URL_HOST: 'http://vote.zeus.ugent.be/'
+      SECURE_URL_HOST: 'https://vote.zeus.ugent.be/'
     depends_on:
       - db
       - rabbitmq
