@@ -26,12 +26,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
-    environment:
-      CELERY_BROKER_URL: 'amqp://rabbitmq'
-      DATABASE_URL: 'postgresql://helios:example@db:5432/helios'
-      ALLOWED_HOSTS: '*'
-      URL_HOST: 'http://vote.zeus.ugent.be/'
-      SECURE_URL_HOST: 'https://vote.zeus.ugent.be/'
+    env_file:
+      - settings.env
     depends_on:
       - db
       - rabbitmq
@@ -43,15 +39,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
-    environment:
-      CELERY_BROKER_URL: 'amqp://rabbitmq'
+    env_file:
+      - settings.env
     depends_on:
       - db
       - rabbitmq
     container_name: worker
 
   rabbitmq:
-    image: rabbitmq:3.8.3-alpine
+    image: rabbitmq:3-management-alpine
     expose: # not needed but more clear
         - "5672"
+    ports:
+            - "127.0.01:15672:15672"
     container_name: rabbitmq
