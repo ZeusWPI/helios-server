@@ -16,7 +16,7 @@ def get_from_env(var, default):
 
 DEBUG = (get_from_env('DEBUG', '1') == '1')
 
-# add admins of the form: 
+# add admins of the form:
 #    ('Ben Adida', 'ben@adida.net'),
 # if you want to be emailed about errors.
 ADMINS = (
@@ -211,10 +211,13 @@ HELIOS_VOTERS_EMAIL = True
 HELIOS_PRIVATE_DEFAULT = False
 
 # authentication systems enabled
-AUTH_ENABLED_AUTH_SYSTEMS = ['password']
-# AUTH_ENABLED_AUTH_SYSTEMS = get_from_env('AUTH_ENABLED_AUTH_SYSTEMS',
-#                                          'google').split(",")
+AUTH_ENABLED_AUTH_SYSTEMS = get_from_env('AUTH_ENABLED_AUTH_SYSTEMS',
+                                         'password').split(",")
 AUTH_DEFAULT_AUTH_SYSTEM = get_from_env('AUTH_DEFAULT_AUTH_SYSTEM', None)
+
+# zeus
+ZEUS_CLIENT_ID = get_from_env('ZEUS_CLIENT_ID', '')
+ZEUS_CLIENT_SECRET = get_from_env('ZEUS_CLIENT_SECRET', '')
 
 # google
 GOOGLE_CLIENT_ID = get_from_env('GOOGLE_CLIENT_ID', '')
@@ -282,5 +285,5 @@ if ROLLBAR_ACCESS_TOKEN:
   MIDDLEWARE += ['rollbar.contrib.django.middleware.RollbarNotifierMiddleware',]
   ROLLBAR = {
     'access_token': ROLLBAR_ACCESS_TOKEN,
-    'environment': 'development' if DEBUG else 'production',  
+    'environment': 'development' if DEBUG else 'production',
   }
