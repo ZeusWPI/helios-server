@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: helios
       POSTGRES_PASSWORD: example
     volumes:
-      - /docker/helios-postgres:/var/run/postgresql
+      - /docker/helios-postgres:/var/lib/postgresql/data
     expose:
       - "5432"
     container_name: db
